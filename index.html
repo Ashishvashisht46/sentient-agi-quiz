@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentient AGI Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        .question { margin-bottom: 20px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        #result { margin-top: 20px; font-size: 18px; color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Sentient AGI Quiz</h1>
+    <p>Test your knowledge on open-source AGI and the Sentient mission!</p>
+    <form id="quizForm">
+        <div class="question">
+            <p>1. What is Sentient's main mission?</p>
+            <label><input type="radio" name="q1" value="a"> Make AGI open-source and community-controlled</label><br>
+            <label><input type="radio" name="q1" value="b"> Build proprietary AI for corporations</label><br>
+            <label><input type="radio" name="q1" value="c"> Focus only on chatbots</label>
+        </div>
+        <div class="question">
+            <p>2. What does GRID stand for in Sentient?</p>
+            <label><input type="radio" name="q2" value="a"> Global Research in Decentralized AI</label><br>
+            <label><input type="radio" name="q2" value="b"> World's largest network of intelligence</label><br>
+            <label><input type="radio" name="q2" value="c"> Gaming Resource Integration Database</label>
+        </div>
+        <div class="question">
+            <p>3. What is 'Loyal AI'?</p>
+            <label><input type="radio" name="q3" value="a"> AI aligned with community values, not corporations</label><br>
+            <label><input type="radio" name="q3" value="b"> AI that follows dog commands</label><br>
+            <label><input type="radio" name="q3" value="c"> Closed-source military AI</label>
+        </div>
+        <div class="question">
+            <p>4. Sentient raised funding from which firm?</p>
+            <label><input type="radio" name="q4" value="a"> Pantera and Founders Fund</label><br>
+            <label><input type="radio" name="q4" value="b"> Only government grants</label><br>
+            <label><input type="radio" name="q4" value="c"> No funding needed</label>
+        </div>
+        <div class="question">
+            <p>5. What standard does Sentient introduce for AI models?</p>
+            <label><input type="radio" name="q5" value="a"> OML (Open, Monetizable, Loyal)</label><br>
+            <label><input type="radio" name="q5" value="b"> HTML for AI</label><br>
+            <label><input type="radio" name="q5" value="c"> Closed API only</label>
+        </div>
+        <button type="button" id="submitBtn">Submit Quiz</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        const answers = { q1: 'a', q2: 'b', q3: 'a', q4: 'a', q5: 'a' };
+        const submitBtn = document.getElementById('submitBtn');
+        const result = document.getElementById('result');
+
+        submitBtn.addEventListener('click', () => {
+            const form = document.getElementById('quizForm');
+            let score = 0;
+            for (let i = 1; i <= 5; i++) {
+                const selected = form[`q${i}`].value;
+                if (selected === answers[`q${i}`]) score++;
+            }
+            let feedback = `You scored ${score}/5! `;
+            if (score === 5) feedback += 'AGI Expert – Lead a discussion in the Sentient Discord!';
+            else if (score >= 3) feedback += 'Solid knowledge – Share what you learned on X.';
+            else feedback += 'Keep learning – Check out the Sentient website for more.';
+            result.innerHTML = feedback;
+        });
+    </script>
+</body>
+</html>
+Add Sentient AGI Quiz HTML
