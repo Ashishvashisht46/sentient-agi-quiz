@@ -3,71 +3,663 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentient AGI Quiz</title>
+    <title>Dobby's Sentient AGI Quiz - A Magical Test of Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
-        .question { margin-bottom: 20px; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-        #result { margin-top: 20px; font-size: 18px; color: blue; }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+        }
+        
+        .magical-border {
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700, #ffed4e);
+            background-size: 400% 400%;
+            animation: shimmer 3s ease-in-out infinite;
+            padding: 3px;
+            border-radius: 15px;
+        }
+        
+        .dobby-card {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        .floating { animation: float 3s ease-in-out infinite; }
+        .sparkle { animation: sparkle 2s ease-in-out infinite; }
+        
+        .dobby-title {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .option-btn {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            border: 2px solid #718096;
+        }
+        
+        .option-btn:hover {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a202c;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        .correct { 
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
+            color: white !important;
+        }
+        
+        .incorrect { 
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
+            color: white !important;
+        }
+        
+        .sock-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            display: inline-block;
+            margin: 0 5px;
+            animation: sparkle 2s ease-in-out infinite;
+        }
     </style>
 </head>
-<body>
-    <h1>Sentient AGI Quiz</h1>
-    <p>Test your knowledge on open-source AGI and the Sentient mission!</p>
-    <form id="quizForm">
-        <div class="question">
-            <p>1. What is Sentient's main mission?</p>
-            <label><input type="radio" name="q1" value="a"> Make AGI open-source and community-controlled</label><br>
-            <label><input type="radio" name="q1" value="b"> Build proprietary AI for corporations</label><br>
-            <label><input type="radio" name="q1" value="c"> Focus only on chatbots</label>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <!-- Magical Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-10 left-10 w-2 h-2 bg-yellow-400 rounded-full sparkle"></div>
+        <div class="absolute top-32 right-20 w-3 h-3 bg-yellow-300 rounded-full sparkle" style="animation-delay: 0.5s;"></div>
+        <div class="absolute bottom-20 left-32 w-2 h-2 bg-yellow-400 rounded-full sparkle" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-40 right-10 w-3 h-3 bg-yellow-300 rounded-full sparkle" style="animation-delay: 1.5s;"></div>
+    </div>
+
+    <div class="magical-border max-w-4xl w-full floating">
+        <div class="dobby-card p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex justify-center items-center mb-4">
+                    <div class="sock-icon"></div>
+                    <h1 class="dobby-title text-4xl md:text-5xl font-bold mx-4">Dobby's Sentient AGI Quiz</h1>
+                    <div class="sock-icon"></div>
+                </div>
+                <p class="text-gray-300 text-lg italic">"Dobby is testing your magical intelligence, master!"</p>
+                <div class="mt-4 text-yellow-400 font-semibold">
+                    <span class="sock-icon" style="width: 20px; height: 20px;"></span>
+                    Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span>
+                    <span class="sock-icon" style="width: 20px; height: 20px;"></span>
+                </div>
+                <div class="mt-2 text-center">
+                    <div class="inline-flex items-center bg-gray-800 rounded-lg px-4 py-2">
+                        <span class="text-yellow-400 font-bold text-lg mr-2">⏰</span>
+                        <span id="timer" class="text-white font-bold text-xl">10</span>
+                        <span class="text-gray-400 ml-1">seconds</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quizContainer" class="space-y-6">
+                <!-- Question will be inserted here -->
+            </div>
+
+            <!-- Results Container -->
+            <div id="resultsContainer" class="hidden text-center space-y-6">
+                <div class="text-6xl mb-4">🧙‍♂️</div>
+                <h2 class="dobby-title text-3xl font-bold mb-4">Quiz Complete!</h2>
+                <div id="scoreDisplay" class="text-2xl text-yellow-400 mb-6"></div>
+                <div id="dobbyMessage" class="text-lg text-gray-300 italic mb-6"></div>
+                <button onclick="restartQuiz()" class="option-btn px-8 py-3 rounded-lg font-semibold text-white">
+                    Take Quiz Again 🔄
+                </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mt-8 bg-gray-700 rounded-full h-3 overflow-hidden">
+                <div id="progressBar" class="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 transition-all duration-500" style="width: 0%"></div>
+            </div>
         </div>
-        <div class="question">
-            <p>2. What does GRID stand for in Sentient?</p>
-            <label><input type="radio" name="q2" value="a"> Global Research in Decentralized AI</label><br>
-            <label><input type="radio" name="q2" value="b"> World's largest network of intelligence</label><br>
-            <label><input type="radio" name="q2" value="c"> Gaming Resource Integration Database</label>
-        </div>
-        <div class="question">
-            <p>3. What is 'Loyal AI'?</p>
-            <label><input type="radio" name="q3" value="a"> AI aligned with community values, not corporations</label><br>
-            <label><input type="radio" name="q3" value="b"> AI that follows dog commands</label><br>
-            <label><input type="radio" name="q3" value="c"> Closed-source military AI</label>
-        </div>
-        <div class="question">
-            <p>4. Sentient raised funding from which firm?</p>
-            <label><input type="radio" name="q4" value="a"> Pantera and Founders Fund</label><br>
-            <label><input type="radio" name="q4" value="b"> Only government grants</label><br>
-            <label><input type="radio" name="q4" value="c"> No funding needed</label>
-        </div>
-        <div class="question">
-            <p>5. What standard does Sentient introduce for AI models?</p>
-            <label><input type="radio" name="q5" value="a"> OML (Open, Monetizable, Loyal)</label><br>
-            <label><input type="radio" name="q5" value="b"> HTML for AI</label><br>
-            <label><input type="radio" name="q5" value="c"> Closed API only</label>
-        </div>
-        <button type="button" id="submitBtn">Submit Quiz</button>
-    </form>
-    <div id="result"></div>
+    </div>
 
     <script>
-        const answers = { q1: 'a', q2: 'b', q3: 'a', q4: 'a', q5: 'a' };
-        const submitBtn = document.getElementById('submitBtn');
-        const result = document.getElementById('result');
-
-        submitBtn.addEventListener('click', () => {
-            const form = document.getElementById('quizForm');
-            let score = 0;
-            for (let i = 1; i <= 5; i++) {
-                const selected = form[`q${i}`].value;
-                if (selected === answers[`q${i}`]) score++;
+        // Default question pool - you can add your custom questions here!
+        const defaultQuestions = [
+            {
+                question: "What is the primary goal of Artificial General Intelligence (AGI)?",
+                options: ["To replace human workers", "To achieve human-level cognitive abilities across all domains", "To process data faster than humans", "To control smart home devices"],
+                correct: 1
+            },
+            {
+                question: "Which of these is a key challenge in developing sentient AI?",
+                options: ["Processing speed", "The hard problem of consciousness", "Memory storage", "Internet connectivity"],
+                correct: 1
+            },
+            {
+                question: "What does the 'Turing Test' primarily measure?",
+                options: ["Processing speed", "Memory capacity", "A machine's ability to exhibit intelligent behavior", "Energy efficiency"],
+                correct: 2
+            },
+            {
+                question: "In AI ethics, what is the 'alignment problem'?",
+                options: ["Ensuring AI goals align with human values", "Aligning computer screens properly", "Synchronizing multiple AI systems", "Balancing computational load"],
+                correct: 0
+            },
+            {
+                question: "What is 'machine consciousness' in AI research?",
+                options: ["A computer that never sleeps", "The theoretical ability of machines to have subjective experiences", "A machine that can repair itself", "An AI that works 24/7"],
+                correct: 1
+            },
+            {
+                question: "Which philosopher is famous for the 'Chinese Room' argument against strong AI?",
+                options: ["Alan Turing", "John Searle", "René Descartes", "Immanuel Kant"],
+                correct: 1
+            },
+            {
+                question: "What is 'emergent behavior' in AI systems?",
+                options: ["Planned responses to emergencies", "Complex behaviors arising from simple rules", "Emergency shutdown procedures", "Backup system activation"],
+                correct: 1
+            },
+            {
+                question: "In the context of AI, what does 'superintelligence' refer to?",
+                options: ["Very fast computers", "AI that surpasses human intelligence in all areas", "Multiple AI systems working together", "AI with perfect memory"],
+                correct: 1
+            },
+            {
+                question: "What is the 'symbol grounding problem' in AI?",
+                options: ["How to store symbols efficiently", "How symbols acquire meaning in artificial systems", "How to display symbols on screen", "How to transmit symbols over networks"],
+                correct: 1
+            },
+            {
+                question: "Which concept describes an AI system's ability to understand and model other minds?",
+                options: ["Theory of Mind", "Mind Reading", "Cognitive Modeling", "Mental Simulation"],
+                correct: 0
             }
-            let feedback = `You scored ${score}/5! `;
-            if (score === 5) feedback += 'AGI Expert – Lead a discussion in the Sentient Discord!';
-            else if (score >= 3) feedback += 'Solid knowledge – Share what you learned on X.';
-            else feedback += 'Keep learning – Check out the Sentient website for more.';
-            result.innerHTML = feedback;
-        });
+        ];
+
+        // YOUR CUSTOM SENTIENT QUESTIONS
+        const customQuestions = [
+            // Company and Funding Questions (1-10)
+            {
+                question: "What is Sentient's primary mission?",
+                options: ["Build proprietary AI for corporations", "Ensure AGI is open-source and not controlled by any single entity", "Focus on cryptocurrency mining", "Develop closed-source chatbots"],
+                correct: 1
+            },
+            {
+                question: "How much funding did Sentient raise in its seed round?",
+                options: ["$50M", "$85M", "$100M", "$200M"],
+                correct: 1
+            },
+            {
+                question: "Which firms co-led Sentient's $85M funding round?",
+                options: ["Andreessen Horowitz and Sequoia", "Pantera Capital and Founders Fund", "Binance Labs and Coinbase Ventures", "Tiger Global and SoftBank"],
+                correct: 1
+            },
+            {
+                question: "What does Sentient aim to prevent in AGI development?",
+                options: ["Overuse of blockchain", "Control by any single entity", "Integration with Web3", "Community involvement"],
+                correct: 1
+            },
+            {
+                question: "Sentient is described as an AI research organization focused on what?",
+                options: ["Creating closed AGI for military use", "Fostering an Open AGI Economy for AI builders and creators", "Developing NFT marketplaces", "Building decentralized exchanges"],
+                correct: 1
+            },
+            {
+                question: "What year was Sentient's funding round announced?",
+                options: ["2023", "2024", "2025", "2026"],
+                correct: 1
+            },
+            {
+                question: "Who is one of the co-founders of Sentient at the intersection of AI and decentralization?",
+                options: ["Elon Musk", "Himanshu Tyagi", "Vitalik Buterin", "Sam Altman"],
+                correct: 1
+            },
+            {
+                question: "Sentient's vision intersects AI with what technology?",
+                options: ["Virtual reality", "Blockchain and decentralization", "Quantum computing only", "Traditional databases"],
+                correct: 1
+            },
+            {
+                question: "What is Sentient's approach to AGI described as in media?",
+                options: ["Centralized and proprietary", "Decentralized and community-built", "Government-funded", "Hardware-focused"],
+                correct: 1
+            },
+            {
+                question: "Sentient partners with projects at the intersection of AI and what?",
+                options: ["Gaming only", "Web3 and blockchain", "Social media platforms", "E-commerce"],
+                correct: 1
+            },
+            
+            // GRID and Products Questions (11-20)
+            {
+                question: "What is the GRID?",
+                options: ["A proprietary AI model", "An open-source AGI network for building, sharing, and monetizing AI agents", "A cryptocurrency token", "A social media platform"],
+                correct: 1
+            },
+            {
+                question: "What does GRID stand for in Sentient's context?",
+                options: ["Global Research in Decentralized AI", "It doesn't stand for anything; it's the world's largest network of intelligence", "Gaming Resource Integration Database", "General Robotics Infrastructure Design"],
+                correct: 1
+            },
+            {
+                question: "What is Sentient Chat?",
+                options: ["A closed AI chatbot", "The user interface to access the GRID", "A video conferencing tool", "A meme generator"],
+                correct: 1
+            },
+            {
+                question: "What is Open Deep Search (ODS)?",
+                options: ["A proprietary search engine", "An open-source retrieval and reasoning framework outperforming proprietary stacks", "A blockchain explorer", "A data storage protocol"],
+                correct: 1
+            },
+            {
+                question: "How does ODS perform on the FRAMES benchmark?",
+                options: ["Below proprietary models", "ODS-v2 achieves 75.3%, outperforming GPT-4o Search Preview", "It ties with Perplexity Pro", "It underperforms open baselines"],
+                correct: 1
+            },
+            {
+                question: "What is Dobby in Sentient's ecosystem?",
+                options: ["A data partner", "A series of open-source LLMs, like Dobby-70B", "A verifiable AI tool", "A compute provider"],
+                correct: 1
+            },
+            {
+                question: "What standard does Sentient introduce for AI models?",
+                options: ["HTML for AI", "OML (Open, Monetizable, Loyal)", "Closed API only", "GRID protocol"],
+                correct: 1
+            },
+            {
+                question: "How many partners does the GRID have as of recent announcements?",
+                options: ["50+", "100+", "20+", "200+"],
+                correct: 1
+            },
+            {
+                question: "What is the Sentient Agent Framework?",
+                options: ["A closed API", "Tools for integrating with Sentient Chat and the GRID", "A funding program", "A community forum"],
+                correct: 1
+            },
+            {
+                question: "What does the GRID enable for developers?",
+                options: ["Only model training", "Building, sharing, and monetizing AI agents", "Cryptocurrency trading", "Social networking"],
+                correct: 1
+            },
+            
+            // Technologies and Features Questions (21-22)
+            {
+                question: "What is Loyal AI?",
+                options: ["AI aligned with corporate profits", "AI aligned with community values, not corporations", "AI for military applications", "AI that follows animal commands"],
+                correct: 1
+            },
+            {
+                question: "In Dobby-70B, how many model owners claimed NFTs?",
+                options: ["100K", "Over 600K", "1M", "50K"],
+                correct: 1
+            },
+            
+            // Partners and Ecosystem Questions (31-40)
+            {
+                question: "Which partner provides verifiable AI inference in the GRID?",
+                options: ["@eigenlayer", "@lagrangedev", "@KGeN_IO", "@ExaAILabs"],
+                correct: 1
+            },
+            {
+                question: "What does @PhalaNetwork provide to the GRID?",
+                options: ["Data labeling", "Trusted Execution Environments (TEEs) for verifiable workloads", "Social data", "Compute resources"],
+                correct: 1
+            },
+            {
+                question: "Which partner focuses on gamer data for the GRID?",
+                options: ["@nillionnetwork", "@KGeN_IO", "@LitProtocol", "@Atoma_Network"],
+                correct: 1
+            },
+            {
+                question: "What is @exa_bits' role in the GRID?",
+                options: ["Model collaboration", "Decentralized compute provider", "Data storage", "Verifiable AI"],
+                correct: 1
+            },
+            {
+                question: "Which partner offers crowdsourced financial data?",
+                options: ["@irys_xyz", "@crunchDAO", "@Hyve_DA", "@zus_network"],
+                correct: 1
+            },
+            {
+                question: "What does @vana provide?",
+                options: ["Blockchain indexing", "Human-sourced datasets across industries", "On-chain analytics", "Permanent data storage"],
+                correct: 1
+            },
+            {
+                question: "Which partner enables programmable signing for agents?",
+                options: ["@0G_labs", "@LitProtocol", "@getmasafi", "@PerleLabs"],
+                correct: 1
+            },
+            {
+                question: "What is @ExaAILabs' function in Sentient Chat?",
+                options: ["Data storage", "Real-time, citation-rich web search", "Model training", "Community governance"],
+                correct: 1
+            },
+            {
+                question: "Which partner aggregates social and web intelligence?",
+                options: ["@trypearai", "@getmasafi", "@JoinSapien", "@LabelLedger"],
+                correct: 1
+            },
+            {
+                question: "What does @eigenlayer contribute to the GRID?",
+                options: ["Data labeling", "Extends Ethereum security for adjudication", "Image datasets", "Low-cost data processing"],
+                correct: 1
+            },
+            
+            // Community and Events Questions (41-50)
+            {
+                question: "What is the Open AGI Summit?",
+                options: ["A cryptocurrency conference", "Community events for Sentient AGI discussions", "A funding round event", "A meme contest"],
+                correct: 1
+            },
+            {
+                question: "In community spotlights, what did @0xMoei build?",
+                options: ["A meme generator", "Dobby Writer Chrome Extension", "A data labeling tool", "A compute network"],
+                correct: 1
+            },
+            {
+                question: "What campaign did @avaxcrypto launch?",
+                options: ["Model training", "Tree donation for wildfire restoration", "NFT giveaway", "Search framework"],
+                correct: 1
+            },
+            {
+                question: "How many users does Sentient Chat have?",
+                options: ["1k+", "5k+", "10k+", "50k+"],
+                correct: 1
+            },
+            {
+                question: "What is the Builder Program's funding potential?",
+                options: ["Up to $500K", "Up to $1M", "Up to $2M", "No funding"],
+                correct: 1
+            },
+            {
+                question: "Which artist was spotlighted for cartoon takes on Dobby?",
+                options: ["@mojojojo_1004", "@jililucky", "@ADoinss", "@goodworse"],
+                correct: 1
+            },
+            {
+                question: "What did @Panchu2605 develop?",
+                options: ["A quiz app", "Dobby X Discord game bot", "A search engine", "A wallet"],
+                correct: 1
+            },
+            {
+                question: "What is @mrahsok's role in the community?",
+                options: ["Artist", "Active helper influencing improvements", "Educator", "Builder"],
+                correct: 1
+            },
+            {
+                question: "What forum is recommended for Sentient discussions?",
+                options: ["Reddit", "OpenAGI Discourse Forum", "X only", "GitHub"],
+                correct: 1
+            },
+            {
+                question: "How does Sentient encourage community participation?",
+                options: ["Through paid ads", "Spotlights for artists, builders, educators, and helpers", "Only events", "No encouragement"],
+                correct: 1
+            }
+        ];
+
+        // Combine default and custom questions
+        const questionPool = [...defaultQuestions, ...customQuestions];
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswer = null;
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        let timerInterval;
+        let timeLeft = 10;
+
+        function initializeQuiz() {
+            // Select 10 random questions from the pool
+            currentQuestions = shuffleArray(questionPool).slice(0, 10);
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswer = null;
+            timeLeft = 10;
+            
+            document.getElementById('totalQuestions').textContent = currentQuestions.length;
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            
+            displayQuestion();
+        }
+
+        function startTimer() {
+            timeLeft = 10;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                // Change color as time runs out
+                const timerElement = document.getElementById('timer');
+                if (timeLeft <= 3) {
+                    timerElement.className = 'text-red-400 font-bold text-xl animate-pulse';
+                } else if (timeLeft <= 5) {
+                    timerElement.className = 'text-yellow-400 font-bold text-xl';
+                } else {
+                    timerElement.className = 'text-white font-bold text-xl';
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // Auto-submit with no answer selected
+                    submitAnswer();
+                }
+            }, 1000);
+        }
+
+        function displayQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            const container = document.getElementById('quizContainer');
+            
+            // Shuffle options and track correct answer
+            const correctAnswer = question.options[question.correct];
+            const shuffledOptions = [...question.options];
+            
+            // Fisher-Yates shuffle
+            for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+            }
+            
+            // Find new position of correct answer
+            const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+            
+            // Store shuffled question data
+            currentQuestions[currentQuestionIndex].shuffledOptions = shuffledOptions;
+            currentQuestions[currentQuestionIndex].shuffledCorrect = newCorrectIndex;
+            
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            updateProgressBar();
+            
+            container.innerHTML = `
+                <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                    <h3 class="text-xl font-semibold text-white mb-6 leading-relaxed">
+                        ${question.question}
+                    </h3>
+                    <div class="space-y-3">
+                        ${shuffledOptions.map((option, index) => `
+                            <button onclick="selectAnswer(${index})" 
+                                    class="option-btn w-full p-4 rounded-lg text-left font-medium text-white hover:scale-105 transition-all duration-300"
+                                    id="option-${index}">
+                                <span class="font-bold text-yellow-400">${String.fromCharCode(65 + index)}.</span> ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button onclick="submitAnswer()" 
+                            id="submitBtn" 
+                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 px-8 py-3 rounded-lg font-bold text-gray-900 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                        Submit Answer ✨
+                    </button>
+                </div>
+            `;
+            
+            // Start the timer for this question
+            startTimer();
+        }
+
+        function selectAnswer(index) {
+            // Remove previous selection
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-yellow-400');
+            });
+            
+            // Highlight selected option
+            document.getElementById(`option-${index}`).classList.add('ring-4', 'ring-yellow-400');
+            selectedAnswer = index;
+            
+            // Enable submit button
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function submitAnswer() {
+            // Clear the timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            const question = currentQuestions[currentQuestionIndex];
+            
+            // Handle case where no answer was selected (time ran out)
+            if (selectedAnswer === null) {
+                // Show correct answer when time runs out
+                document.getElementById(`option-${question.shuffledCorrect}`).classList.add('correct');
+                
+                // Show "Time's up!" message
+                const container = document.getElementById('quizContainer');
+                const timeUpMessage = document.createElement('div');
+                timeUpMessage.className = 'text-center text-red-400 font-bold text-lg mt-4';
+                timeUpMessage.textContent = "⏰ Time's up! No answer selected.";
+                container.appendChild(timeUpMessage);
+            } else {
+                const isCorrect = selectedAnswer === question.shuffledCorrect;
+                
+                if (isCorrect) {
+                    score++;
+                    document.getElementById(`option-${selectedAnswer}`).classList.add('correct');
+                } else {
+                    document.getElementById(`option-${selectedAnswer}`).classList.add('incorrect');
+                    document.getElementById(`option-${question.shuffledCorrect}`).classList.add('correct');
+                }
+            }
+            
+            // Disable all options
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            // Disable submit button
+            document.getElementById('submitBtn').disabled = true;
+            
+            // Show next question or finish
+            setTimeout(() => {
+                if (currentQuestionIndex < currentQuestions.length - 1) {
+                    currentQuestionIndex++;
+                    selectedAnswer = null;
+                    displayQuestion();
+                } else {
+                    showResults();
+                }
+            }, 2000);
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('scoreDisplay').innerHTML = `
+                <div class="text-4xl font-bold mb-2">${score}/${currentQuestions.length}</div>
+                <div class="text-2xl">${percentage}% Correct</div>
+            `;
+            
+            let message = "";
+            let emoji = "";
+            
+            if (percentage >= 90) {
+                message = "Dobby is amazed! Master has extraordinary intelligence! 🧙‍♂️✨";
+                emoji = "🏆";
+            } else if (percentage >= 80) {
+                message = "Excellent work! Dobby thinks master is very wise! 🌟";
+                emoji = "🎉";
+            } else if (percentage >= 70) {
+                message = "Good job! Master shows great potential! 📚";
+                emoji = "👏";
+            } else if (percentage >= 60) {
+                message = "Not bad! Dobby believes master can do better with practice! 💪";
+                emoji = "🤔";
+            } else {
+                message = "Dobby suggests master studies more about AI and consciousness! 📖";
+                emoji = "🤓";
+            }
+            
+            document.getElementById('dobbyMessage').innerHTML = `
+                <div class="text-4xl mb-4">${emoji}</div>
+                <div>"${message}"</div>
+            `;
+        }
+
+        function restartQuiz() {
+            // Clear any running timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            initializeQuiz();
+        }
+
+        // Initialize quiz on page load
+        initializeQuiz();
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979bdc98a3c2dc97',t:'MTc1Njk3MTg2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-Add Sentient AGI Quiz HTML
+
