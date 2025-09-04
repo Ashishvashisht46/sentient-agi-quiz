@@ -430,6 +430,7 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let selectedAnswer = null;
+        let missedQuestions = [];
 
         function shuffleArray(array) {
             const shuffled = [...array];
@@ -443,6 +444,54 @@
         let timerInterval;
         let timeLeft = 10;
 
+        // Dobby API Integration
+        async function getDobbyResponse(score, totalQuestions, missedQuestions) {
+            try {
+                const percentage = Math.round((score / totalQuestions) * 100);
+                const missedTopics = missedQuestions.length > 0 ? 
+                    missedQuestions.map(q => q.question.substring(0, 50) + '...').join('; ') : 'None';
+                
+                const prompt = `You are Dobby, the magical house-elf from Harry Potter, now helping with a Sentient AGI quiz. The user scored ${score}/${totalQuestions} (${percentage}%). 
+
+Missed questions about: ${missedTopics}
+
+Give a personalized response in Dobby's characteristic speaking style (referring to user as "master", being enthusiastic and helpful). Keep it encouraging but honest about their performance. Mention specific areas they did well or need improvement in based on Sentient/AGI topics. Keep response under 100 words and be magical!`;
+
+                const response = await fetch('https://api.fireworks.ai/inference/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer fw_3ZnHNFd5zPS7kDGJDTrWErpD',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'accounts/sentientfoundation-serverless/models/dobby-mini-unhinged-plus-llama-3-1-8b',
+                        messages: [{
+                            role: 'user',
+                            content: prompt
+                        }],
+                        max_tokens: 150,
+                        temperature: 0.7
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.choices[0].message.content;
+                } else {
+                    throw new Error('API request failed');
+                }
+            } catch (error) {
+                console.log('Dobby API unavailable, using fallback message');
+                // Fallback messages
+                const percentage = Math.round((score / totalQuestions) * 100);
+                if (percentage >= 90) return "Dobby is amazed! Master has extraordinary intelligence! 🧙‍♂️✨";
+                if (percentage >= 80) return "Excellent work! Dobby thinks master is very wise! 🌟";
+                if (percentage >= 70) return "Good job! Master shows great potential! 📚";
+                if (percentage >= 60) return "Not bad! Dobby believes master can do better with practice! 💪";
+                return "Dobby suggests master studies more about AI and consciousness! 📖";
+            }
+        }
+
         function initializeQuiz() {
             // Select 10 random questions from the pool
             currentQuestions = shuffleArray(questionPool).slice(0, 10);
@@ -450,6 +499,7 @@
             score = 0;
             selectedAnswer = null;
             timeLeft = 10;
+            missedQuestions = [];
             
             document.getElementById('totalQuestions').textContent = currentQuestions.length;
             document.getElementById('resultsContainer').classList.add('hidden');
@@ -570,6 +620,9 @@
                 // Show correct answer when time runs out
                 document.getElementById(`option-${question.shuffledCorrect}`).classList.add('correct');
                 
+                // Track missed question
+                missedQuestions.push(question);
+                
                 // Show "Time's up!" message
                 const container = document.getElementById('quizContainer');
                 const timeUpMessage = document.createElement('div');
@@ -585,6 +638,8 @@
                 } else {
                     document.getElementById(`option-${selectedAnswer}`).classList.add('incorrect');
                     document.getElementById(`option-${question.shuffledCorrect}`).classList.add('correct');
+                    // Track missed question
+                    missedQuestions.push(question);
                 }
             }
             
@@ -613,7 +668,7 @@
             document.getElementById('progressBar').style.width = progress + '%';
         }
 
-        function showResults() {
+        async function showResults() {
             document.getElementById('quizContainer').classList.add('hidden');
             document.getElementById('resultsContainer').classList.remove('hidden');
             
@@ -623,29 +678,28 @@
                 <div class="text-2xl">${percentage}% Correct</div>
             `;
             
-            let message = "";
-            let emoji = "";
+            // Show loading message while getting AI response
+            document.getElementById('dobbyMessage').innerHTML = `
+                <div class="text-4xl mb-4">🤔</div>
+                <div class="italic text-gray-400">Dobby is thinking about your performance...</div>
+            `;
             
-            if (percentage >= 90) {
-                message = "Dobby is amazed! Master has extraordinary intelligence! 🧙‍♂️✨";
-                emoji = "🏆";
-            } else if (percentage >= 80) {
-                message = "Excellent work! Dobby thinks master is very wise! 🌟";
-                emoji = "🎉";
-            } else if (percentage >= 70) {
-                message = "Good job! Master shows great potential! 📚";
-                emoji = "👏";
-            } else if (percentage >= 60) {
-                message = "Not bad! Dobby believes master can do better with practice! 💪";
-                emoji = "🤔";
-            } else {
-                message = "Dobby suggests master studies more about AI and consciousness! 📖";
-                emoji = "🤓";
-            }
+            // Get AI-powered response from Dobby
+            const dobbyResponse = await getDobbyResponse(score, currentQuestions.length, missedQuestions);
+            
+            let emoji = "";
+            if (percentage >= 90) emoji = "🏆";
+            else if (percentage >= 80) emoji = "🎉";
+            else if (percentage >= 70) emoji = "👏";
+            else if (percentage >= 60) emoji = "🤔";
+            else emoji = "🤓";
             
             document.getElementById('dobbyMessage').innerHTML = `
                 <div class="text-4xl mb-4">${emoji}</div>
-                <div>"${message}"</div>
+                <div class="bg-gray-800 rounded-lg p-4 border-l-4 border-yellow-400">
+                    <div class="text-yellow-400 font-semibold mb-2">🧙‍♂️ Dobby says:</div>
+                    <div class="italic text-gray-300">"${dobbyResponse}"</div>
+                </div>
             `;
         }
 
@@ -660,6 +714,7 @@
         // Initialize quiz on page load
         initializeQuiz();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979bdc98a3c2dc97',t:'MTc1Njk3MTg2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979ce06cd607461f',t:'MTc1Njk4MjUxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
