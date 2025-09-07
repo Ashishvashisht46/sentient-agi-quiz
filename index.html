@@ -108,12 +108,12 @@
                     <div class="sock-icon"></div>
                 </div>
                 <p class="text-gray-300 text-lg italic">"Dobby is testing your magical intelligence, master!"</p>
-                <div class="mt-4 text-yellow-400 font-semibold">
+                <div id="quizInfo" class="mt-4 text-yellow-400 font-semibold hidden">
                     <span class="sock-icon" style="width: 20px; height: 20px;"></span>
                     Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span>
                     <span class="sock-icon" style="width: 20px; height: 20px;"></span>
                 </div>
-                <div class="mt-2 text-center">
+                <div id="timerInfo" class="mt-2 text-center hidden">
                     <div class="inline-flex items-center bg-gray-800 rounded-lg px-4 py-2">
                         <span class="text-yellow-400 font-bold text-lg mr-2">⏰</span>
                         <span id="timer" class="text-white font-bold text-xl">10</span>
@@ -122,24 +122,80 @@
                 </div>
             </div>
 
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="text-center space-y-6">
+                <div class="text-4xl md:text-6xl mb-6">🧙‍♂️</div>
+                <div class="bg-gray-800 rounded-lg p-4 md:p-6 mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-white mb-4">Welcome to Dobby's Magical Quiz!</h3>
+                    <div class="text-gray-300 space-y-2 md:space-y-3 text-sm md:text-base">
+                        <p>✨ <strong>10 questions</strong> about Sentient AGI and AI consciousness</p>
+                        <p>⏰ <strong>10 seconds</strong> per question with auto-advance</p>
+                        <p>🎯 Test your knowledge of the <strong>GRID, Dobby models, and AGI theory</strong></p>
+                        <p>🏆 Get personalized feedback from <strong>Dobby AI</strong> at the end!</p>
+                    </div>
+                </div>
+                
+                <!-- Username Input -->
+                <div class="bg-gray-800 rounded-lg p-4 md:p-6 mb-6">
+                    <label for="username" class="block text-white font-semibold mb-3 text-sm md:text-base">Enter your name (optional):</label>
+                    <input type="text" id="username" placeholder="Your magical name..." 
+                           class="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border-2 border-gray-600 focus:border-yellow-400 focus:outline-none transition-colors text-sm md:text-base"
+                           maxlength="20">
+                    <p class="text-gray-400 text-xs md:text-sm mt-2">This will be used for your results and sharing!</p>
+                </div>
+                
+                <button onclick="showCountdown()" class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 px-8 md:px-12 py-3 md:py-4 rounded-lg font-bold text-gray-900 text-lg md:text-xl transition-all duration-300 transform hover:scale-105 shadow-lg w-full md:w-auto">
+                    🚀 Start Quiz
+                </button>
+                <p class="text-gray-400 text-xs md:text-sm italic mt-4">"Dobby is excited to test master's intelligence!"</p>
+            </div>
+
+            <!-- Countdown Screen -->
+            <div id="countdownScreen" class="text-center space-y-6 hidden">
+                <div class="text-4xl md:text-6xl mb-6">⏰</div>
+                <h3 class="text-2xl md:text-3xl font-semibold text-white mb-4">Get Ready!</h3>
+                <div id="countdownNumber" class="text-6xl md:text-8xl font-bold text-yellow-400 mb-6">3</div>
+                <p class="text-gray-300 text-sm md:text-base">Quiz starting in...</p>
+                <div id="userGreeting" class="text-yellow-400 font-semibold text-sm md:text-base"></div>
+            </div>
+
             <!-- Quiz Container -->
-            <div id="quizContainer" class="space-y-6">
+            <div id="quizContainer" class="space-y-6 hidden">
                 <!-- Question will be inserted here -->
             </div>
 
             <!-- Results Container -->
-            <div id="resultsContainer" class="hidden text-center space-y-6">
-                <div class="text-6xl mb-4">🧙‍♂️</div>
-                <h2 class="dobby-title text-3xl font-bold mb-4">Quiz Complete!</h2>
-                <div id="scoreDisplay" class="text-2xl text-yellow-400 mb-6"></div>
-                <div id="dobbyMessage" class="text-lg text-gray-300 italic mb-6"></div>
-                <button onclick="restartQuiz()" class="option-btn px-8 py-3 rounded-lg font-semibold text-white">
+            <div id="resultsContainer" class="hidden text-center space-y-4 md:space-y-6">
+                <div class="text-4xl md:text-6xl mb-4">🧙‍♂️</div>
+                <h2 class="dobby-title text-2xl md:text-3xl font-bold mb-4">Quiz Complete!</h2>
+                <div id="finalUserName" class="text-yellow-400 font-semibold text-lg md:text-xl mb-2"></div>
+                <div id="scoreDisplay" class="text-xl md:text-2xl text-yellow-400 mb-4 md:mb-6"></div>
+                <div id="dobbyMessage" class="text-sm md:text-lg text-gray-300 italic mb-4 md:mb-6"></div>
+                
+                <!-- Social Sharing -->
+                <div class="bg-gray-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
+                    <h4 class="text-white font-semibold mb-4 text-sm md:text-base">Share Your Results! 🎉</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <button onclick="shareToTwitter()" class="bg-blue-500 hover:bg-blue-600 px-4 py-3 rounded-lg text-white font-medium transition-colors text-sm md:text-base">
+                            🐦 Share on X
+                        </button>
+                        <button onclick="copyResults()" class="bg-gray-600 hover:bg-gray-700 px-4 py-3 rounded-lg text-white font-medium transition-colors text-sm md:text-base">
+                            📋 Copy Results
+                        </button>
+                        <button onclick="shareToLinkedIn()" class="bg-blue-700 hover:bg-blue-800 px-4 py-3 rounded-lg text-white font-medium transition-colors text-sm md:text-base">
+                            💼 LinkedIn
+                        </button>
+                    </div>
+                    <div id="copyMessage" class="text-green-400 text-xs md:text-sm mt-2 hidden">✅ Copied to clipboard!</div>
+                </div>
+                
+                <button onclick="restartQuiz()" class="option-btn px-6 md:px-8 py-3 rounded-lg font-semibold text-white text-sm md:text-base w-full md:w-auto">
                     Take Quiz Again 🔄
                 </button>
             </div>
 
             <!-- Progress Bar -->
-            <div class="mt-8 bg-gray-700 rounded-full h-3 overflow-hidden">
+            <div id="progressContainer" class="mt-8 bg-gray-700 rounded-full h-3 overflow-hidden hidden">
                 <div id="progressBar" class="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 transition-all duration-500" style="width: 0%"></div>
             </div>
         </div>
@@ -431,6 +487,8 @@
         let score = 0;
         let selectedAnswer = null;
         let missedQuestions = [];
+        let userName = '';
+        let countdownInterval;
 
         function shuffleArray(array) {
             const shuffled = [...array];
@@ -500,11 +558,56 @@ Give a personalized response in Dobby's characteristic speaking style (referring
             selectedAnswer = null;
             timeLeft = 10;
             missedQuestions = [];
+            userName = '';
             
             document.getElementById('totalQuestions').textContent = currentQuestions.length;
-            document.getElementById('resultsContainer').classList.add('hidden');
-            document.getElementById('quizContainer').classList.remove('hidden');
             
+            // Show welcome screen initially
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+            document.getElementById('countdownScreen').classList.add('hidden');
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('quizInfo').classList.add('hidden');
+            document.getElementById('timerInfo').classList.add('hidden');
+            document.getElementById('progressContainer').classList.add('hidden');
+        }
+
+        function showCountdown() {
+            // Get username
+            userName = document.getElementById('username').value.trim() || 'Anonymous Wizard';
+            
+            // Hide welcome screen and show countdown
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('countdownScreen').classList.remove('hidden');
+            
+            // Show personalized greeting
+            document.getElementById('userGreeting').textContent = `Good luck, ${userName}! 🌟`;
+            
+            // Start countdown
+            let count = 3;
+            document.getElementById('countdownNumber').textContent = count;
+            
+            countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    document.getElementById('countdownNumber').textContent = count;
+                } else if (count === 0) {
+                    document.getElementById('countdownNumber').textContent = 'GO!';
+                    document.getElementById('countdownNumber').className = 'text-6xl md:text-8xl font-bold text-green-400 mb-6 animate-pulse';
+                } else {
+                    clearInterval(countdownInterval);
+                    startQuiz();
+                }
+            }, 1000);
+        }
+
+        function startQuiz() {
+            // Hide countdown screen and show quiz elements
+            document.getElementById('countdownScreen').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            document.getElementById('quizInfo').classList.remove('hidden');
+            document.getElementById('timerInfo').classList.remove('hidden');
+            document.getElementById('progressContainer').classList.remove('hidden');
             displayQuestion();
         }
 
@@ -564,14 +667,14 @@ Give a personalized response in Dobby's characteristic speaking style (referring
             updateProgressBar();
             
             container.innerHTML = `
-                <div class="bg-gray-800 rounded-lg p-6 mb-6">
-                    <h3 class="text-xl font-semibold text-white mb-6 leading-relaxed">
+                <div class="bg-gray-800 rounded-lg p-4 md:p-6 mb-4 md:mb-6">
+                    <h3 class="text-lg md:text-xl font-semibold text-white mb-4 md:mb-6 leading-relaxed">
                         ${question.question}
                     </h3>
-                    <div class="space-y-3">
+                    <div class="space-y-2 md:space-y-3">
                         ${shuffledOptions.map((option, index) => `
                             <button onclick="selectAnswer(${index})" 
-                                    class="option-btn w-full p-4 rounded-lg text-left font-medium text-white hover:scale-105 transition-all duration-300"
+                                    class="option-btn w-full p-3 md:p-4 rounded-lg text-left font-medium text-white hover:scale-105 transition-all duration-300 text-sm md:text-base"
                                     id="option-${index}">
                                 <span class="font-bold text-yellow-400">${String.fromCharCode(65 + index)}.</span> ${option}
                             </button>
@@ -582,7 +685,7 @@ Give a personalized response in Dobby's characteristic speaking style (referring
                 <div class="text-center">
                     <button onclick="submitAnswer()" 
                             id="submitBtn" 
-                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 px-8 py-3 rounded-lg font-bold text-gray-900 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 px-6 md:px-8 py-3 rounded-lg font-bold text-gray-900 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base w-full md:w-auto"
                             disabled>
                         Submit Answer ✨
                     </button>
@@ -670,18 +773,24 @@ Give a personalized response in Dobby's characteristic speaking style (referring
 
         async function showResults() {
             document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('quizInfo').classList.add('hidden');
+            document.getElementById('timerInfo').classList.add('hidden');
             document.getElementById('resultsContainer').classList.remove('hidden');
             
             const percentage = Math.round((score / currentQuestions.length) * 100);
+            
+            // Show username
+            document.getElementById('finalUserName').textContent = userName;
+            
             document.getElementById('scoreDisplay').innerHTML = `
-                <div class="text-4xl font-bold mb-2">${score}/${currentQuestions.length}</div>
-                <div class="text-2xl">${percentage}% Correct</div>
+                <div class="text-3xl md:text-4xl font-bold mb-2">${score}/${currentQuestions.length}</div>
+                <div class="text-lg md:text-2xl">${percentage}% Correct</div>
             `;
             
             // Show loading message while getting AI response
             document.getElementById('dobbyMessage').innerHTML = `
-                <div class="text-4xl mb-4">🤔</div>
-                <div class="italic text-gray-400">Dobby is thinking about your performance...</div>
+                <div class="text-3xl md:text-4xl mb-4">🤔</div>
+                <div class="italic text-gray-400 text-sm md:text-base">Dobby is thinking about your performance...</div>
             `;
             
             // Get AI-powered response from Dobby
@@ -695,26 +804,70 @@ Give a personalized response in Dobby's characteristic speaking style (referring
             else emoji = "🤓";
             
             document.getElementById('dobbyMessage').innerHTML = `
-                <div class="text-4xl mb-4">${emoji}</div>
-                <div class="bg-gray-800 rounded-lg p-4 border-l-4 border-yellow-400">
-                    <div class="text-yellow-400 font-semibold mb-2">🧙‍♂️ Dobby says:</div>
-                    <div class="italic text-gray-300">"${dobbyResponse}"</div>
+                <div class="text-3xl md:text-4xl mb-4">${emoji}</div>
+                <div class="bg-gray-800 rounded-lg p-3 md:p-4 border-l-4 border-yellow-400">
+                    <div class="text-yellow-400 font-semibold mb-2 text-sm md:text-base">🧙‍♂️ Dobby says:</div>
+                    <div class="italic text-gray-300 text-sm md:text-base">"${dobbyResponse}"</div>
                 </div>
             `;
         }
 
+        function shareToTwitter() {
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+            const text = `🧙‍♂️ I just scored ${score}/${currentQuestions.length} (${percentage}%) on Dobby's Sentient AGI Quiz! Test your knowledge of AI consciousness and the GRID. #SentientAGI #DobbyQuiz #AI`;
+            const url = window.location.href;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function shareToLinkedIn() {
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+            const text = `I just completed Dobby's Sentient AGI Quiz and scored ${score}/${currentQuestions.length} (${percentage}%)! It's a fascinating test of knowledge about AI consciousness, the GRID, and AGI development. Check it out!`;
+            const url = window.location.href;
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        async function copyResults() {
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+            const text = `🧙‍♂️ ${userName} scored ${score}/${currentQuestions.length} (${percentage}%) on Dobby's Sentient AGI Quiz!\n\nTest your knowledge of AI consciousness and the GRID: ${window.location.href}`;
+            
+            try {
+                await navigator.clipboard.writeText(text);
+                document.getElementById('copyMessage').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('copyMessage').classList.add('hidden');
+                }, 3000);
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                document.getElementById('copyMessage').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('copyMessage').classList.add('hidden');
+                }, 3000);
+            }
+        }
+
         function restartQuiz() {
-            // Clear any running timer
+            // Clear any running timers
             if (timerInterval) {
                 clearInterval(timerInterval);
             }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            // Reset countdown number styling
+            document.getElementById('countdownNumber').className = 'text-6xl md:text-8xl font-bold text-yellow-400 mb-6';
+            
             initializeQuiz();
         }
 
         // Initialize quiz on page load
         initializeQuiz();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979ce06cd607461f',t:'MTc1Njk4MjUxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97b2fba60573a7bb',t:'MTc1NzIxNDMxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
-
